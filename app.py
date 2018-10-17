@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+import datetime
 
 
 # configuration
@@ -17,6 +18,11 @@ CORS(app)
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
+
+
+@app.route('/date', methods=['GET'])
+def get_date():
+    return jsonify(datetime.datetime.now().isoformat())
 
 
 if __name__ == '__main__':
