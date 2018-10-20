@@ -47,23 +47,21 @@ def get_athletes():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT athleteNickName, "
-                   "athleteName, "
-                   "athleteSurName, "
-                   "divisionDescr, "
-                   "bornDate "
-                   "from dbo.T_cfg_Athletes "
-                   "join T_sys_Divisions on T_cfg_Athletes.division = T_sys_Divisions.division")
+    query = "SELECT athleteNickName, athleteName, athleteSurName, divisionDescr, bornDate from dbo.T_cfg_Athletes join T_sys_Divisions on T_cfg_Athletes.division = T_sys_Divisions.division"
+    print(query)
+
+    cursor.execute(query)
     values = cursor.fetchall()
     conn.close()
 
     athletesData = []
     for value in values:
-        athletesData.append({column_fields[0]: value[0],
-                             column_fields[1]: value[1],
-                             column_fields[2]: value[2],
-                             column_fields[3]: value[3],
-                             column_fields[4]: value[4]})
+        print(value[0] + ' - ' + value[1]  + value[2] + value[3] + str(value[4]))
+        athletesData.append({'AthleteNickName': value[0],
+                             column_fields[0]: value[1],
+                             column_fields[1]: value[2],
+                             column_fields[2]: value[3],
+                             column_fields[3]: value[4]})
 
     json_values = jsonify({'fields': column_fields, 'athletes': athletesData})
 
