@@ -40,15 +40,20 @@ def get_date():
 @app.route('/athletes', methods=['GET'])
 def get_athletes():
 
-    column_fields = ['Athlete Nick Name',
-                                'Athlete Name',
-                                'Athlete Surname',
+    column_fields = [ 'Athlete Name',
+                      'Athlete Surname',
                                 'Division',
                                 'Birth Date']
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * from dbo.T_cfg_Athletes")
+    cursor.execute("SELECT athleteNickName, "
+                   "athleteName, "
+                   "athleteSurName, "
+                   "divisionDescr, "
+                   "bornDate "
+                   "from dbo.T_cfg_Athletes "
+                   "join T_sys_Divisions on T_cfg_Athletes.division = T_sys_Divisions.division")
     values = cursor.fetchall()
     conn.close()
 
