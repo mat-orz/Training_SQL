@@ -43,7 +43,7 @@ def get_athletes():
     column_fields = [ 'Athlete Name',
                       'Athlete Surname',
                                 'Division',
-                                'Birth Date']
+                                'Birth Date', 'showDetails']
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -61,7 +61,8 @@ def get_athletes():
                              column_fields[0]: value[1],
                              column_fields[1]: value[2],
                              column_fields[2]: value[3],
-                             column_fields[3]: value[4]})
+                             column_fields[3]: value[4],
+                             '_show_details' : 'true'})
 
     json_values = jsonify({'fields': column_fields, 'athletes': athletesData})
 
