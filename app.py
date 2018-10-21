@@ -26,6 +26,8 @@ app.config.from_object(__name__)
 # enable CORS
 CORS(app)
 
+#Global var DB connection
+
 
 @app.route('/ping', methods=['GET'])
 def ping_pong():
@@ -43,37 +45,53 @@ def get_athletes():
     column_fields = [ 'Athlete Name',
                       'Athlete Surname',
                                 'Division',
-                                'Birth Date']
+                                'Birth Date', 'showDetails']
+
     conn = get_connection()
-    cursor = conn.cursor()
 
-    cursor.execute("SELECT athleteNickName, "
-                   "athleteName, "
-                   "athleteSurName, "
-                   "divisionDescr, "
-                   "bornDate "
-                   "from dbo.T_cfg_Athletes "
-                   "join T_sys_Divisions on T_cfg_Athletes.division = T_sys_Divisions.division")
-    values = cursor.fetchall()
-    conn.close()
+    if not conn['alive']:
+        msg = {'ERROR': str(conn['connection'])}
+        return jsonify(msg)
+    else:
 
-    athletesData = []
-    for value in values:
-        athletesData.append({column_fields[0]: value[0],
-                             column_fields[1]: value[1],
-                             column_fields[2]: value[2],
-                             column_fields[3]: value[3],
-                             column_fields[4]: value[4]})
+        cursor = conn['connection'].cursor()
 
-    json_values = jsonify({'fields': column_fields, 'athletes': athletesData})
+        query = "SELECT athleteNickName, athleteName, athleteSurName, divisionDescr, bornDate from dbo.T_cfg_Athletes join T_sys_Divisions on T_cfg_Athletes.division = T_sys_Divisions.division"
+        print(query)
 
-    return json_values
+        cursor.execute(query)
+        values = cursor.fetchall()
+        conn['connection'].close()
+
+        athletesData = []
+        for value in values:
+            print(value[0] + ' - ' + value[1]  + value[2] + value[3] + str(value[4]))
+            athletesData.append({'AthleteNickName': value[0],
+                                column_fields[0]: value[1],
+                                column_fields[1]: value[2],
+                                column_fields[2]: value[3],
+                                column_fields[3]: value[4],
+                                '_show_details' : 'true'})
+
+        json_values = jsonify({'fields': column_fields, 'athletes': athletesData})
+
+        return json_values
 
 
 
 def get_connection():
-    return pymssql.connect(host=args.db_ip, server=args.db_instance, user=args.db_user, password=args.db_password,
-                           database=args.db_name, port=args.db_port)
+
+    connection = {}
+    try:
+        conn = pymssql.connect(host=args.db_ip, server=args.db_instance, user=args.db_user, password=args.db_password,
+                        database=args.db_name, port=args.db_port, login_timeout=1)
+        connection = {'alive': True, 'connection': conn}
+        
+    except Exception as e:
+        print(e)
+        connection = {'alive': False, 'connection': e}
+    return connection
+
 
 if __name__ == '__main__':
 
