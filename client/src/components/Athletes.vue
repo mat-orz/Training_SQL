@@ -1,5 +1,9 @@
 <template>
   <div class="container">
+
+      <span v-if="error">
+          <b-alert show variant="danger"> {{ error }}</b-alert>
+      </span>
       <span v-if="showLoading">
           <vue-loading type="bars" color="#d9544e"
           :size="{ width: '50px', height: '50px' }">
@@ -31,16 +35,22 @@ export default {
     return {
       athletes: [],
       fields: [],
+      error: '',
       showLoading: true,
     };
   },
   methods: {
     getAthletes() {
+      this.error = '';
       const path = 'http://localhost:5000/athletes';
       axios.get(path)
         .then((res) => {
           // eslint-disable-next-line
           console.log(res.data)
+
+          if (res.data.ERROR) {
+            this.error = res.data.ERROR;
+          }
           this.athletes = res.data.athletes;
           this.fields = res.data.fields;
           this.showLoading = false;
