@@ -9,20 +9,18 @@
           :size="{ width: '50px', height: '50px' }">
           </vue-loading>
           </span>
-          <b-btn v-b-modal.modal1>Test Modal</b-btn>
       <b-table striped small bordered hover :items="athletes" :fields="fields">
-        <template slot="show_details" slot-scope="row">
-          <b-btn v-b-modal.myModal>Show Modal</b-btn>
-      <!-- we use @click.stop here to prevent emitting of a 'row-clicked' event  -->
-      <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2">
-       {{ row.detailsShowing ? 'Show' : 'Hide'}} Details
-      </b-button>
-      <!-- In some circumstances you may need to use @click.native.stop instead -->
-      <!-- As `row.showDetails` is one-way, we call the toggleDetails function on @change -->
-      <b-form-checkbox @click.native.stop @change="row.toggleDetails" v-model="row.detailsShowing">
-        Details via check
-      </b-form-checkbox>
-    </template>
+        <template slot="actions" slot-scope="data">
+          <b-btn v-b-modal.modal1 variant="primary" size='sm'
+           @click="showModal(data.item.A_N)"> {{ data.item.A_N }}
+            {{ data.item.A_S }} Modal</b-btn>
+        </template>
+        <b-modal ref="myModalRef" hide-footer title="WIP">
+        <div class="d-block text-center">
+          <h3>Hello From My Modal!</h3>
+        </div>
+        <b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Close Me</b-btn>
+      </b-modal>
       </b-table>
   </div>
 </template>
@@ -40,6 +38,16 @@ export default {
     };
   },
   methods: {
+    showModal(test) {
+      // eslint-disable-next-line
+      console.log(test);
+      this.$refs.myModalRef.show();
+    },
+    hideModal() {
+      // eslint-disable-next-line
+      console.log(test);
+      this.$refs.myModalRef.hide();
+    },
     getAthletes() {
       this.error = '';
       const path = 'http://localhost:5000/athletes';
@@ -58,6 +66,7 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
+          this.error = error;
           this.showLoading = false;
         });
     },
