@@ -9,19 +9,18 @@
           :size="{ width: '50px', height: '50px' }">
           </vue-loading>
           </span>
-      <b-table striped small bordered hover :items="athletes" :fields="fields">
+      <b-table striped small bordered hover :items="athletes" :fields="fields"
+                      v-if="showAthletesTable">
         <template slot="actions" slot-scope="data">
-          <b-btn v-b-modal.modal1 variant="primary" size='sm'
-           @click="showModal(data.item.A_N)"> {{ data.item.A_N }}
-            {{ data.item.A_S }} Modal</b-btn>
+          <b-btn variant="primary" size='sm'
+           @click="selectedAthlete(data.item)">
+           Select {{ data.item.A_N }} {{ data.item.A_S }}
+           </b-btn>
         </template>
-        <b-modal ref="myModalRef" hide-footer title="WIP">
-        <div class="d-block text-center">
-          <h3>Hello From My Modal!</h3>
-        </div>
-        <b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Close Me</b-btn>
-      </b-modal>
       </b-table>
+        <b-btn variant="primary" size='sm' v-if="showSelectedAthlete"
+           @click="cancelledAthlete(data.item.A_ID)">Cancel {{ data.item.A_N }} {{ data.item.A_S }}
+           </b-btn>
   </div>
 </template>
 
@@ -32,21 +31,29 @@ export default {
   data() {
     return {
       athletes: [],
+      athlete: {},
       fields: [],
       error: '',
       showLoading: true,
+      showAthletesTable: false,
+      showSelectedAthlete: false,
+      athleteId: '',
+      atheleteSurname: '',
+      atheleteName: '',
     };
   },
   methods: {
-    showModal(test) {
-      // eslint-disable-next-line
-      console.log(test);
-      this.$refs.myModalRef.show();
+    selectedAthlete(data) {
+      this.athleteId = data.A_ID;
+      this.athleteName = data.A_N;
+      this.atheleteSurname = data.A_S;
+      this.showSelectedAthlete = true;
+      this.showAthletesTable = false;
     },
-    hideModal() {
-      // eslint-disable-next-line
-      console.log(test);
-      this.$refs.myModalRef.hide();
+    cancelledAthlete(whatever) {
+      this.athleteId = whatever;
+      this.showSelectedAthlete = false;
+      this.showAthletesTable = true;
     },
     getAthletes() {
       this.error = '';
@@ -62,6 +69,7 @@ export default {
           this.athletes = res.data.athletes;
           this.fields = res.data.fields;
           this.showLoading = false;
+          this.showAthletesTable = true;
         })
         .catch((error) => {
           // eslint-disable-next-line

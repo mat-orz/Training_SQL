@@ -69,7 +69,7 @@ def get_athletes():
         athletesData = []
         for value in values:
             print(value[0] + ' - ' + value[1]  + value[2] + value[3] + str(value[4]))
-            athletesData.append({'AthleteNickName': value[0],
+            athletesData.append({'A_ID': value[0],
                                 'A_N': value[1],
                                 'A_S': value[2],
                                 'A_D': value[3],
