@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="../assets/jsGantt/jsgantt.css" />
 <template>
   <div class="container">
 
@@ -19,68 +20,9 @@
         </template>
       </b-table>
         <b-btn variant="primary" size='sm' v-if="showSelectedAthlete"
-           @click="cancelledAthlete(data.item.A_ID)">Cancel {{ data.item.A_N }} {{ data.item.A_S }}
+           @click="cancelledAthlete(athlete.id)">Quit {{ athlete.name }} {{ athlete.surname }}
            </b-btn>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
-
-export default {
-  data() {
-    return {
-      athletes: [],
-      athlete: {},
-      fields: [],
-      error: '',
-      showLoading: true,
-      showAthletesTable: false,
-      showSelectedAthlete: false,
-      athleteId: '',
-      atheleteSurname: '',
-      atheleteName: '',
-    };
-  },
-  methods: {
-    selectedAthlete(data) {
-      this.athleteId = data.A_ID;
-      this.athleteName = data.A_N;
-      this.atheleteSurname = data.A_S;
-      this.showSelectedAthlete = true;
-      this.showAthletesTable = false;
-    },
-    cancelledAthlete(whatever) {
-      this.athleteId = whatever;
-      this.showSelectedAthlete = false;
-      this.showAthletesTable = true;
-    },
-    getAthletes() {
-      this.error = '';
-      const path = 'http://localhost:5000/athletes';
-      axios.get(path)
-        .then((res) => {
-          // eslint-disable-next-line
-          console.log(res.data)
-
-          if (res.data.ERROR) {
-            this.error = res.data.ERROR;
-          }
-          this.athletes = res.data.athletes;
-          this.fields = res.data.fields;
-          this.showLoading = false;
-          this.showAthletesTable = true;
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-          this.error = error;
-          this.showLoading = false;
-        });
-    },
-  },
-  created() {
-    this.getAthletes();
-  },
-};
-</script>
+<script src="./Athletes.js"></script>

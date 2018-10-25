@@ -35,3 +35,4 @@ export default {
   },
 };
 </script>
+<script src="../assets/jsGantt/jsgantt.js"></script>
