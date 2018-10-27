@@ -42,10 +42,13 @@ def get_date():
 @app.route('/athletes', methods=['GET'])
 def get_athletes():
 
-    column_fields = [ 'Athlete Name',
-                      'Athlete Surname',
-                                'Division',
-                                'Birth Date', 'showDetails']
+   
+    
+    column_fields = [{'A_N': {'label': 'Name', 'sortable': True}},
+                     {'A_S': {'label': 'Surname', 'sortable': True}},
+                     {'A_D': {'label': 'Division', 'sortable': True}},
+                     {'A_B': {'label': 'Brth Date', 'sortable': True}},
+                     'actions']
 
     conn = get_connection()
 
@@ -66,12 +69,11 @@ def get_athletes():
         athletesData = []
         for value in values:
             print(value[0] + ' - ' + value[1]  + value[2] + value[3] + str(value[4]))
-            athletesData.append({'AthleteNickName': value[0],
-                                column_fields[0]: value[1],
-                                column_fields[1]: value[2],
-                                column_fields[2]: value[3],
-                                column_fields[3]: value[4],
-                                '_show_details' : 'true'})
+            athletesData.append({'A_ID': value[0],
+                                'A_N': value[1],
+                                'A_S': value[2],
+                                'A_D': value[3],
+                                'A_B': value[4]})
 
         json_values = jsonify({'fields': column_fields, 'athletes': athletesData})
 
@@ -84,7 +86,7 @@ def get_connection():
     connection = {}
     try:
         conn = pymssql.connect(host=args.db_ip, server=args.db_instance, user=args.db_user, password=args.db_password,
-                        database=args.db_name, port=args.db_port, login_timeout=1)
+                        database=args.db_name, port=args.db_port, login_timeout=5)
         connection = {'alive': True, 'connection': conn}
         
     except Exception as e:
